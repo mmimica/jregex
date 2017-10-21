@@ -29,8 +29,10 @@
 
 package jregex;
 
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.NoSuchElementException;
+import java.util.Vector;
 
 /**
  * Matcher instance is an automaton that actually performs matching. It provides the following methods:
@@ -370,8 +372,9 @@ public class Matcher implements MatchResult{
    *   p.matcher("x").isPrefix();
    * </pre>
    * @return true if the entire target matches the beginning of the pattern
+ * @throws InterruptedException 
    */
-   public final boolean matchesPrefix(){
+   public final boolean matchesPrefix() throws InterruptedException{
       setPosition(0);
       return search(ANCHOR_START|ACCEPT_INCOMPLETE|ANCHOR_END);
    }
@@ -379,9 +382,10 @@ public class Matcher implements MatchResult{
   /**
    * Just an old name for isPrefix().<br>
    * Retained for backwards compatibility.
+ * @throws InterruptedException 
    * @deprecated Replaced by isPrefix()
    */
-   public final boolean isStart(){
+   public final boolean isStart() throws InterruptedException{
       return matchesPrefix();
    }
    
@@ -400,8 +404,9 @@ public class Matcher implements MatchResult{
    *   p.matcher("#xyz#").matches();
    * </pre>
    * @return whether a current target matches the whole pattern.
+ * @throws InterruptedException 
    */
-   public final boolean matches(){
+   public final boolean matches() throws InterruptedException{
 if(called) setPosition(0);
       return search(ANCHOR_START|ANCHOR_END);
    }
@@ -410,8 +415,9 @@ if(called) setPosition(0);
    * Just a combination of setTarget(String) and matches().
    * @param s the target string;
    * @return whether the specified string matches the whole pattern.
+ * @throws InterruptedException 
    */
-   public final boolean matches(String s){
+   public final boolean matches(String s) throws InterruptedException{
       setTarget(s);
       return search(ANCHOR_START|ANCHOR_END);
    }
@@ -433,8 +439,9 @@ if(called) setPosition(0);
    * Searches through a target for a matching substring, starting from just after the end of last match.
    * If there wasn't any search performed, starts from zero.
    * @return <code>true</code> if a match found.
+ * @throws InterruptedException 
    */
-   public final boolean find(){
+   public final boolean find() throws InterruptedException{
       if(called) skip();
       return search(0);
    }
@@ -444,8 +451,9 @@ if(called) setPosition(0);
    * If there wasn't any search performed, starts from zero.
    * @param anchors a zero or a combination(bitwise OR) of ANCHOR_START,ANCHOR_END,ANCHOR_LASTMATCH,ACCEPT_INCOMPLETE
    * @return <code>true</code> if a match found.
+ * @throws InterruptedException 
    */
-   public final boolean find(int anchors){
+   public final boolean find(int anchors) throws InterruptedException{
       if(called) skip();
       return search(anchors);
    }
@@ -466,21 +474,21 @@ if(called) setPosition(0);
       return new MatchIterator(){
          private boolean checked=false;
          private boolean hasMore=false;
-         public boolean hasMore(){
+         public boolean hasMore() throws InterruptedException{
             if(!checked) check();
             return hasMore;
          }
-         public MatchResult nextMatch(){
+         public MatchResult nextMatch() throws InterruptedException{
             if(!checked) check();
             if(!hasMore) throw new NoSuchElementException();
             checked=false;
             return Matcher.this;
          }
-         private final void check(){
+         private final void check() throws InterruptedException{
             hasMore=find(options);
             checked=true;
          }
-         public int count(){
+         public int count() throws InterruptedException{
             if(!checked) check();
             if(!hasMore) return 0;
             int c=1;
@@ -494,9 +502,10 @@ if(called) setPosition(0);
   /**
    * Continues to search from where the last search left off.
    * The same as proceed(0).
+ * @throws InterruptedException 
    * @see Matcher#proceed(int)
    */
-   public final boolean proceed(){
+   public final boolean proceed() throws InterruptedException{
       return proceed(0);
    }
    
@@ -534,8 +543,9 @@ if(called) setPosition(0);
    * </pre>
    * Note that using <code>find()</code> method we would find '123' only.
    * @param options search options, some of ANCHOR_START|ANCHOR_END|ANCHOR_LASTMATCH|ACCEPT_INCOMPLETE; zero value(default) stands for usual search for substring.
+ * @throws InterruptedException 
    */
-   public final boolean proceed(int options){
+   public final boolean proceed(int options) throws InterruptedException{
 //System.out.println("next() : top="+top);
       if(called){
          if(top==null){
@@ -866,7 +876,7 @@ new Exception().printStackTrace();
       return bounds(id).out-offset;
    }
    
-   private final boolean search(int anchors){
+   private final boolean search(int anchors) throws InterruptedException{
       called=true;
       final int end=this.end;
       int offset=this.offset;
@@ -925,6 +935,8 @@ new Exception().printStackTrace();
       while(wOffset<=end){
          matchHere:
          for(;;){
+             if (Thread.interrupted())
+                 throw new InterruptedException();
      /*
      System.out.print("char: "+i+", term: ");
      System.out.print(term.toString());

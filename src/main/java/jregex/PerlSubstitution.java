@@ -29,10 +29,6 @@
 
 package jregex;
 
-import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
-
 /**
  * An implementation of the Substitution interface. Performs substitutions in accordance with Perl-like substitution scripts.<br>
  * The latter is a string, containing a mix of memory register references and plain text blocks.<br>
@@ -87,7 +83,7 @@ public class PerlSubstitution implements Substitution{
    
    //It seems we should somehow throw an IllegalArgumentException if an expression 
    //holds a reference to a non-existing group. Such checking will require a Pattern instance.
-   public PerlSubstitution(String s){
+   public PerlSubstitution(String s) throws NumberFormatException, InterruptedException{
       Matcher refMatcher=new Matcher(refPtn);
       refMatcher.setTarget(s);
       queueEntry=makeQueue(refMatcher);
@@ -99,7 +95,7 @@ public class PerlSubstitution implements Substitution{
       return dest.toString();
    }
    
-   private static Element makeQueue(Matcher refMatcher){
+   private static Element makeQueue(Matcher refMatcher) throws NumberFormatException, InterruptedException{
       if(refMatcher.find()){
          Element element;
          if(refMatcher.isCaptured(NAME_ID)){

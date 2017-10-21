@@ -185,10 +185,11 @@ public class Pattern implements Serializable,REFlags{
    * A shorthand for Pattern.matcher(String).matches().<br>
    * @param s the target
    * @return true if the entire target matches the pattern 
+ * @throws InterruptedException 
    * @see Matcher#matches()
    * @see Matcher#matches(String)
    */
-   public boolean matches(String s){
+   public boolean matches(String s) throws InterruptedException{
       return matcher(s).matches();
    }
    
@@ -196,9 +197,10 @@ public class Pattern implements Serializable,REFlags{
    * A shorthand for Pattern.matcher(String).matchesPrefix().<br>
    * @param s the target
    * @return true if the entire target matches the beginning of the pattern
+ * @throws InterruptedException 
    * @see Matcher#matchesPrefix()
    */
-   public boolean startsWith(String s){
+   public boolean startsWith(String s) throws InterruptedException{
       return matcher(s).matchesPrefix();
    }
    
@@ -286,9 +288,11 @@ public class Pattern implements Serializable,REFlags{
    * //prints "quick The fox brown over jumped lazy the dog"
    * </pre>
    * @param expr a perl-like expression, the "$&" and "${&}" standing for whole match, the "$N" and "${N}" standing for group#N, and "${Foo}" standing for named group Foo.
+ * @throws InterruptedException 
+ * @throws NumberFormatException 
    * @see Replacer
    */
-   public Replacer replacer(String expr){
+   public Replacer replacer(String expr) throws NumberFormatException, InterruptedException{
       return new Replacer(this,expr);
    }
    

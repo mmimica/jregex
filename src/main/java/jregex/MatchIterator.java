@@ -32,7 +32,7 @@ package jregex;
 import java.io.*;
 
 public interface MatchIterator{
-   public boolean hasMore();
-   public MatchResult nextMatch();
-   public int count();
+   public boolean hasMore() throws InterruptedException;
+   public MatchResult nextMatch() throws InterruptedException;
+   public int count() throws InterruptedException;
 }

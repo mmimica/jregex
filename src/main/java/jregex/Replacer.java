@@ -29,8 +29,9 @@
 
 package jregex;
 
-import java.io.*;
-import java.util.Hashtable;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * <b>The Replacer class</b> suggests some methods to replace occurences of a pattern 
@@ -72,109 +73,125 @@ public class Replacer{
    }
    
   /**
+ * @throws InterruptedException 
+ * @throws NumberFormatException 
    */
-   public Replacer(Pattern pattern, String substitution){
+   public Replacer(Pattern pattern, String substitution) throws NumberFormatException, InterruptedException{
       this(pattern,substitution,true);
    }
    
   /**
+ * @throws InterruptedException 
+ * @throws NumberFormatException 
    */
-   public Replacer(Pattern pattern, String substitution, boolean isPerlExpr){
+   public Replacer(Pattern pattern, String substitution, boolean isPerlExpr) throws NumberFormatException, InterruptedException{
       this.pattern=pattern;
       this.substitution= isPerlExpr? (Substitution)new PerlSubstitution(substitution): 
                                new DummySubstitution(substitution);
    }
    
-   public void setSubstitution(String s, boolean isPerlExpr){
+   public void setSubstitution(String s, boolean isPerlExpr) throws NumberFormatException, InterruptedException{
       substitution= isPerlExpr? (Substitution)new PerlSubstitution(s): 
                                new DummySubstitution(s);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public String replace(String text){
+   public String replace(String text) throws InterruptedException{
       TextBuffer tb=wrap(new StringBuffer(text.length()));
       replace(pattern.matcher(text),substitution,tb);
       return tb.toString();
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public String replace(char[] chars,int off,int len){
+   public String replace(char[] chars,int off,int len) throws InterruptedException{
       TextBuffer tb=wrap(new StringBuffer(len));
       replace(pattern.matcher(chars,off,len),substitution,tb);
       return tb.toString();
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public String replace(MatchResult res,int group){
+   public String replace(MatchResult res,int group) throws InterruptedException{
       TextBuffer tb=wrap(new StringBuffer());
       replace(pattern.matcher(res,group),substitution,tb);
       return tb.toString();
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public String replace(Reader text,int length)throws IOException{
+   public String replace(Reader text,int length)throws IOException, InterruptedException{
       TextBuffer tb=wrap(new StringBuffer(length>=0? length: 0));
       replace(pattern.matcher(text,length),substitution,tb);
       return tb.toString();
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(String text,StringBuffer sb){
+   public int replace(String text,StringBuffer sb) throws InterruptedException{
       return replace(pattern.matcher(text),substitution,wrap(sb));
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(char[] chars,int off,int len,StringBuffer sb){
+   public int replace(char[] chars,int off,int len,StringBuffer sb) throws InterruptedException{
       return replace(chars,off,len,wrap(sb));
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(MatchResult res,int group,StringBuffer sb){
+   public int replace(MatchResult res,int group,StringBuffer sb) throws InterruptedException{
       return replace(res,group,wrap(sb));
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(MatchResult res,String groupName,StringBuffer sb){
+   public int replace(MatchResult res,String groupName,StringBuffer sb) throws InterruptedException{
       return replace(res,groupName,wrap(sb));
    }
    
-   public int replace(Reader text,int length,StringBuffer sb)throws IOException{
+   public int replace(Reader text,int length,StringBuffer sb)throws IOException, InterruptedException{
       return replace(text,length,wrap(sb));
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(String text,TextBuffer dest){
+   public int replace(String text,TextBuffer dest) throws InterruptedException{
       return replace(pattern.matcher(text),substitution,dest);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(char[] chars,int off,int len,TextBuffer dest){
+   public int replace(char[] chars,int off,int len,TextBuffer dest) throws InterruptedException{
       return replace(pattern.matcher(chars,off,len),substitution,dest);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(MatchResult res,int group,TextBuffer dest){
+   public int replace(MatchResult res,int group,TextBuffer dest) throws InterruptedException{
       return replace(pattern.matcher(res,group),substitution,dest);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public int replace(MatchResult res,String groupName,TextBuffer dest){
+   public int replace(MatchResult res,String groupName,TextBuffer dest) throws InterruptedException{
       return replace(pattern.matcher(res,groupName),substitution,dest);
    }
    
-   public int replace(Reader text,int length,TextBuffer dest)throws IOException{
+   public int replace(Reader text,int length,TextBuffer dest)throws IOException, InterruptedException{
       return replace(pattern.matcher(text,length),substitution,dest);
    }
    
@@ -183,8 +200,9 @@ public class Replacer{
    * by a given substitution appending the result to a buffer.<br>
    * The substitution starts from current matcher's position, current match
    * not included.
+ * @throws InterruptedException 
    */
-   public static int replace(Matcher m,Substitution substitution,TextBuffer dest){
+   public static int replace(Matcher m,Substitution substitution,TextBuffer dest) throws InterruptedException{
       boolean firstPass=true;
       int c=0;
       while(m.find()){
@@ -199,7 +217,7 @@ public class Replacer{
       return c;
    }
    
-   public static int replace(Matcher m,Substitution substitution,Writer out) throws IOException{
+   public static int replace(Matcher m,Substitution substitution,Writer out) throws IOException, InterruptedException{
       try{
          return replace(m,substitution,wrap(out));
       }
@@ -209,30 +227,34 @@ public class Replacer{
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public void replace(String text,Writer out) throws IOException{
+   public void replace(String text,Writer out) throws IOException, InterruptedException{
       replace(pattern.matcher(text),substitution,out);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public void replace(char[] chars,int off,int len,Writer out) throws IOException{
+   public void replace(char[] chars,int off,int len,Writer out) throws IOException, InterruptedException{
       replace(pattern.matcher(chars,off,len),substitution,out);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public void replace(MatchResult res,int group,Writer out) throws IOException{
+   public void replace(MatchResult res,int group,Writer out) throws IOException, InterruptedException{
       replace(pattern.matcher(res,group),substitution,out);
    }
    
   /**
+ * @throws InterruptedException 
    */
-   public void replace(MatchResult res,String groupName,Writer out) throws IOException{
+   public void replace(MatchResult res,String groupName,Writer out) throws IOException, InterruptedException{
       replace(pattern.matcher(res,groupName),substitution,out);
    }
    
-   public void replace(Reader in,int length,Writer out)throws IOException{
+   public void replace(Reader in,int length,Writer out)throws IOException, InterruptedException{
       replace(pattern.matcher(in,length),substitution,out);
    }
    

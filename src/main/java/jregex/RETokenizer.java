@@ -53,7 +53,7 @@ import java.util.*;
  * @see        Pattern#tokenizer(java.lang.String)
  */
 
-public class RETokenizer implements Enumeration{
+public class RETokenizer {
    private Matcher matcher;
    private boolean checked;
    private boolean hasToken;
@@ -87,19 +87,19 @@ public class RETokenizer implements Enumeration{
       return emptyTokensEnabnled;
    }
    
-   public boolean hasMore(){
+   public boolean hasMore() throws InterruptedException{
       if(!checked) check();
       return hasToken;
    }
    
-   public String nextToken(){
+   public String nextToken() throws InterruptedException{
       if(!checked) check();
       if(!hasToken) throw new NoSuchElementException();
       checked=false;
       return token;
    }
    
-   public String[] split(){
+   public String[] split() throws InterruptedException{
       return collect(this,null,0);
    }
    
@@ -107,7 +107,7 @@ public class RETokenizer implements Enumeration{
       matcher.setPosition(0);
    }
    
-   private static final String[] collect(RETokenizer tok,String[] arr,int count){
+   private static final String[] collect(RETokenizer tok,String[] arr,int count) throws InterruptedException{
       if(tok.hasMore()){
          String s=tok.nextToken();
 //System.out.println("collect(,,"+count+"): token="+s);
@@ -120,7 +120,7 @@ public class RETokenizer implements Enumeration{
       return arr;
    }
    
-   private void check(){
+   private void check() throws InterruptedException{
       final boolean emptyOk=this.emptyTokensEnabnled;
       checked=true;
       if(endReached){
@@ -160,17 +160,6 @@ public class RETokenizer implements Enumeration{
       token=m.prefix();
       m.setTarget(m,MatchResult.SUFFIX);
       //m.setTarget(m.suffix());
-   }
-   
-   public boolean hasMoreElements(){
-      return hasMore();
-   }
-   
-  /**
-   * @return a next token as a String
-   */
-   public Object nextElement(){
-      return nextToken();
    }
    
    /*
