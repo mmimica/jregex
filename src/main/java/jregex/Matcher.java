@@ -80,6 +80,8 @@ public class Matcher implements MatchResult{
    * @see Matcher#find(int)
    */
    public static final int ACCEPT_INCOMPLETE=8;
+
+   public static int REGEX_DEPTH_LIMIT = Integer.MAX_VALUE;
    
    //see search(ANCHOR_START|...)
    private static Term startAnchor=new Term(Term.START);
@@ -897,6 +899,7 @@ new Exception().printStackTrace();
       SearchEntry first=this.first;
       SearchEntry top=this.top;
       SearchEntry actual=null;
+      int entryCnt = 1;
       int cnt,regLen;
       int i;
       
@@ -937,6 +940,9 @@ new Exception().printStackTrace();
          for(;;){
              if (Thread.interrupted())
                  throw new InterruptedException();
+             
+             if (entryCnt > REGEX_DEPTH_LIMIT)
+                 throw new RegexTooDeepException();
      /*
      System.out.print("char: "+i+", term: ");
      System.out.print(term.toString());
@@ -1311,6 +1317,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1330,6 +1337,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1351,6 +1359,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1389,6 +1398,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1428,6 +1438,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1446,6 +1457,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                      }
                      term=term.next;
                      continue;
@@ -1466,6 +1478,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                      }
                      term=term.next;
                      continue;
@@ -1513,6 +1526,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                      }
                      term=term.next;
                      continue;
@@ -1558,6 +1572,7 @@ new Exception().printStackTrace();
                            actual=new SearchEntry();
                            top.on=actual;
                            actual.sub=top;
+                           entryCnt++;
                         }
                         term=term.next;
                         continue;
@@ -1583,6 +1598,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                      }
                      term=term.next;
                      continue;
@@ -1606,6 +1622,7 @@ new Exception().printStackTrace();
                         actual=new SearchEntry();
                         top.on=actual;
                         actual.sub=top;
+                        entryCnt++;
                      }
                      term=term.next;
                      continue;
@@ -1697,6 +1714,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   term=term.next;
                   continue;
@@ -1713,6 +1731,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   
                   term=term.next;
@@ -1743,6 +1762,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   
                   i=tmp;
@@ -1763,6 +1783,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   
                   term=term.next;
@@ -1792,6 +1813,7 @@ new Exception().printStackTrace();
                      actual=new SearchEntry();
                      top.on=actual;
                      actual.sub=top;
+                     entryCnt++;
                   }
                   term=term.next;
                   continue;
