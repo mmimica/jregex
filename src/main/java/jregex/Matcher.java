@@ -82,7 +82,8 @@ public class Matcher implements MatchResult{
    public static final int ACCEPT_INCOMPLETE=8;
 
    public static int REGEX_DEPTH_LIMIT = Integer.MAX_VALUE;
-   
+   public static int REGEX_NLOOKAHEAD_LIMIT = Integer.MAX_VALUE;
+
    //see search(ANCHOR_START|...)
    private static Term startAnchor=new Term(Term.START);
    
@@ -900,6 +901,7 @@ new Exception().printStackTrace();
       SearchEntry top=this.top;
       SearchEntry actual=null;
       int entryCnt = 1;
+      int nLookaheadCnt = 0;
       int cnt,regLen;
       int i;
       
@@ -941,7 +943,7 @@ new Exception().printStackTrace();
              if (Thread.interrupted())
                  throw new InterruptedException();
              
-             if (entryCnt > REGEX_DEPTH_LIMIT)
+             if (entryCnt > REGEX_DEPTH_LIMIT || nLookaheadCnt > REGEX_NLOOKAHEAD_LIMIT)
                  throw new RegexTooDeepException();
      /*
      System.out.print("char: "+i+", term: ");
@@ -1733,12 +1735,13 @@ new Exception().printStackTrace();
                      actual.sub=top;
                      entryCnt++;
                   }
-                  
+                  nLookaheadCnt++;
                   term=term.next;
                   continue;
                }
-               case Term.NLOOKBEHIND_OUT:
-               case Term.NLOOKAHEAD_OUT:{
+               case Term.NLOOKAHEAD_OUT:
+                  nLookaheadCnt--;
+               case Term.NLOOKBEHIND_OUT:{
                   LAEntry le=lookaheads[term.lookaheadId];
                	 actual=le.actual;
                   top=le.top;
