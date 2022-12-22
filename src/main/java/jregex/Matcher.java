@@ -941,10 +941,10 @@ new Exception().printStackTrace();
          matchHere:
          for(;;){
              if (Thread.interrupted())
-                 throw new InterruptedException();
+                 throw new RegexInterruptedException(re.stringRepr);
              
              if (entryCnt > REGEX_DEPTH_LIMIT || nLookaheadCnt > REGEX_NLOOKAHEAD_LIMIT)
-                 throw new RegexTooDeepException();
+                 throw new RegexTooDeepException(re.stringRepr);
      /*
      System.out.print("char: "+i+", term: ");
      System.out.print(term.toString());
